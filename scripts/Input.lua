@@ -47,38 +47,47 @@ function Input.isInRange(xmouse,ymouse,x,y,xregion,yregion)
 end
 
 function Input.resizeCoordinates(xmouse, ymouse)
-  return xmouse * Config.Settings.SCREEN_SIZE.width / 256, ymouse * Config.Settings.SCREEN_SIZE.height / 192
+  return xmouse * Config.SCREEN_SIZE.width / 256, ymouse * Config.SCREEN_SIZE.height / 192
 end
 
 function Input.onClick(xmouse, ymouse)
-
-  if Config.EDIT_MENU.enabled then
-
+  if Config.AR_MENU.enabled then
+    local ar_size, ar_keys = Utils.getTableSizeAndKeys(Config.Settings.AR_MENU)
+    if Input.isInRange(xmouse, ymouse, Config.AR_MENU.AR_LIST.x, Config.AR_MENU.AR_LIST.y, Config.AR_MENU.AR_LIST.width, Config.AR_MENU.AR_LIST.item_height * ar_size) then
+      local selectedItem = math.floor((ymouse - Config.AR_MENU.AR_LIST.y) / Config.AR_MENU.AR_LIST.item_height) + 1
+      Config.Settings.AR_MENU[ar_keys[selectedItem]] = not Config.Settings.AR_MENU[ar_keys[selectedItem]]
+    end
+	
+	if Input.isInRange(xmouse, ymouse, Config.EDIT_MENU.HUD_EDIT_BUTTON.x, Config.EDIT_MENU.HUD_EDIT_BUTTON.y, Config.EDIT_MENU.HUD_EDIT_BUTTON.width, Config.EDIT_MENU.HUD_EDIT_BUTTON.height) then
+	    Config.EDIT_MENU.enabled = true
+		Config.AR_MENU.enabled = false
+    end
+  elseif Config.EDIT_MENU.enabled then
     local custom_hud_size, custom_hud_keys = Utils.getTableSizeAndKeys(CustomHud.Items)
-    if Input.isInRange(xmouse, ymouse, Config.Settings.EDIT_PANEL.CUSTOM_HUD.x, Config.Settings.EDIT_PANEL.CUSTOM_HUD.y, Config.Settings.EDIT_PANEL.CUSTOM_HUD.width, Config.Settings.EDIT_PANEL.CUSTOM_HUD.item_height * custom_hud_size) then
-      local selectedItem = math.floor((ymouse - Config.Settings.EDIT_PANEL.CUSTOM_HUD.y) / Config.Settings.EDIT_PANEL.CUSTOM_HUD.item_height) + 1
+    if Input.isInRange(xmouse, ymouse, Config.EDIT_MENU.CUSTOM_HUD.x, Config.EDIT_MENU.CUSTOM_HUD.y, Config.EDIT_MENU.CUSTOM_HUD.width, Config.EDIT_MENU.CUSTOM_HUD.item_height * custom_hud_size) then
+      local selectedItem = math.floor((ymouse - Config.EDIT_MENU.CUSTOM_HUD.y) / Config.EDIT_MENU.CUSTOM_HUD.item_height) + 1
       Config.Settings.CUSTOM_HUD[custom_hud_keys[selectedItem]].visible = not Config.Settings.CUSTOM_HUD[custom_hud_keys[selectedItem]].visible
     end
 
-    if Input.isInRange(xmouse, ymouse, Config.Settings.EDIT_PANEL.CUSTOM_HUD_EDIT_BUTTON.x, Config.Settings.EDIT_PANEL.CUSTOM_HUD_EDIT_BUTTON.y, Config.Settings.EDIT_PANEL.CUSTOM_HUD_EDIT_BUTTON.width, Config.Settings.EDIT_PANEL.CUSTOM_HUD_EDIT_BUTTON.height) then
+    if Input.isInRange(xmouse, ymouse, Config.EDIT_MENU.CUSTOM_HUD_EDIT_BUTTON.x, Config.EDIT_MENU.CUSTOM_HUD_EDIT_BUTTON.y, Config.EDIT_MENU.CUSTOM_HUD_EDIT_BUTTON.width, Config.EDIT_MENU.CUSTOM_HUD_EDIT_BUTTON.height) then
       Config.EDIT_CUSTOM_HUD.enabled = not Config.EDIT_CUSTOM_HUD.enabled
     end
 
     local original_hud_size, original_hud_keys = Utils.getTableSizeAndKeys(Config.Settings.ORIGINAL_HUD)
-    if Input.isInRange(xmouse, ymouse, Config.Settings.EDIT_PANEL.ORIGINAL_HUD.x, Config.Settings.EDIT_PANEL.ORIGINAL_HUD.y, Config.Settings.EDIT_PANEL.ORIGINAL_HUD.width, Config.Settings.EDIT_PANEL.ORIGINAL_HUD.item_height * original_hud_size) then
-      local selectedItem = math.floor((ymouse - Config.Settings.EDIT_PANEL.ORIGINAL_HUD.y) / Config.Settings.EDIT_PANEL.ORIGINAL_HUD.item_height) + 1
+    if Input.isInRange(xmouse, ymouse, Config.EDIT_MENU.ORIGINAL_HUD.x, Config.EDIT_MENU.ORIGINAL_HUD.y, Config.EDIT_MENU.ORIGINAL_HUD.width, Config.EDIT_MENU.ORIGINAL_HUD.item_height * original_hud_size) then
+      local selectedItem = math.floor((ymouse - Config.EDIT_MENU.ORIGINAL_HUD.y) / Config.EDIT_MENU.ORIGINAL_HUD.item_height) + 1
       Config.Settings.ORIGINAL_HUD[original_hud_keys[selectedItem]] = not Config.Settings.ORIGINAL_HUD[original_hud_keys[selectedItem]]
     end
 
-    local misc_size, misc_keys = Utils.getTableSizeAndKeys(Config.Settings.MISC)
-    if Input.isInRange(xmouse, ymouse, Config.Settings.EDIT_PANEL.MISC.x, Config.Settings.EDIT_PANEL.MISC.y, Config.Settings.EDIT_PANEL.MISC.width, Config.Settings.EDIT_PANEL.MISC.item_height * misc_size) then
-      local selectedItem = math.floor((ymouse - Config.Settings.EDIT_PANEL.MISC.y) / Config.Settings.EDIT_PANEL.MISC.item_height) + 1
-      Config.Settings.MISC[misc_keys[selectedItem]] = not Config.Settings.MISC[misc_keys[selectedItem]]
+    local misc_size, misc_keys = Utils.getTableSizeAndKeys(Config.Settings.HUD_SETTINGS)
+    if Input.isInRange(xmouse, ymouse, Config.EDIT_MENU.HUD_SETTINGS.x, Config.EDIT_MENU.HUD_SETTINGS.y, Config.EDIT_MENU.HUD_SETTINGS.width, Config.EDIT_MENU.HUD_SETTINGS.item_height * misc_size) then
+      local selectedItem = math.floor((ymouse - Config.EDIT_MENU.HUD_SETTINGS.y) / Config.EDIT_MENU.HUD_SETTINGS.item_height) + 1
+      Config.Settings.HUD_SETTINGS[misc_keys[selectedItem]] = not Config.Settings.HUD_SETTINGS[misc_keys[selectedItem]]
     end
 
     local actions_size, actions_keys = Utils.getTableSizeAndKeys(Actions.Items)
-    if Input.isInRange(xmouse, ymouse, Config.Settings.EDIT_PANEL.ACTIONS.x, Config.Settings.EDIT_PANEL.ACTIONS.y, Config.Settings.EDIT_PANEL.ACTIONS.width, Config.Settings.EDIT_PANEL.ACTIONS.item_height * actions_size) then
-      local selectedItem = math.floor((ymouse - Config.Settings.EDIT_PANEL.ACTIONS.y) / Config.Settings.EDIT_PANEL.ACTIONS.item_height) + 1
+    if Input.isInRange(xmouse, ymouse, Config.EDIT_MENU.ACTIONS.x, Config.EDIT_MENU.ACTIONS.y, Config.EDIT_MENU.ACTIONS.width, Config.EDIT_MENU.ACTIONS.item_height * actions_size) then
+      local selectedItem = math.floor((ymouse - Config.EDIT_MENU.ACTIONS.y) / Config.EDIT_MENU.ACTIONS.item_height) + 1
       Actions.Items[actions_keys[selectedItem]].active = not Actions.Items[actions_keys[selectedItem]].active
       if Actions.Items[actions_keys[selectedItem]].active then
         Actions.Items[actions_keys[selectedItem]].start()
@@ -96,17 +105,24 @@ function Input.onClick(xmouse, ymouse)
       end
     end
 
-    if Input.isInRange(xmouse, ymouse, Config.Settings.EDIT_PANEL.SAVE_CONFIG_BUTTON.x, Config.Settings.EDIT_PANEL.SAVE_CONFIG_BUTTON.y, Config.Settings.EDIT_PANEL.SAVE_CONFIG_BUTTON.width, Config.Settings.EDIT_PANEL.SAVE_CONFIG_BUTTON.height) then
+    if Input.isInRange(xmouse, ymouse, Config.EDIT_MENU.SAVE_CONFIG_BUTTON.x, Config.EDIT_MENU.SAVE_CONFIG_BUTTON.y, Config.EDIT_MENU.SAVE_CONFIG_BUTTON.width, Config.EDIT_MENU.SAVE_CONFIG_BUTTON.height) then
       Config.save()
       Config.SAVE_CONFIG.pressed = true
     end
 
-    if Input.isInRange(xmouse, ymouse, Config.Settings.EDIT_PANEL.HIDE_MENU_BUTTON.x, Config.Settings.EDIT_PANEL.HIDE_MENU_BUTTON.y, Config.Settings.EDIT_PANEL.HIDE_MENU_BUTTON.width, Config.Settings.EDIT_PANEL.HIDE_MENU_BUTTON.height) then
+    if Input.isInRange(xmouse, ymouse, Config.EDIT_MENU.HIDE_MENU_BUTTON.x, Config.EDIT_MENU.HIDE_MENU_BUTTON.y, Config.EDIT_MENU.HIDE_MENU_BUTTON.width, Config.EDIT_MENU.HIDE_MENU_BUTTON.height) then
       Config.EDIT_CUSTOM_HUD.enabled = false
       Config.EDIT_MENU.enabled = false
-      print('Edit Menu is disabled! To enable it again, please reload the lua script.')
+      print('Edit Menu is disabled! To enable it again, right-click on the touch screen!')
     end
-
+	
+	if Input.isInRange(xmouse, ymouse, Config.AR_MENU.AR_BUTTON.x, Config.AR_MENU.AR_BUTTON.y, Config.AR_MENU.AR_BUTTON.width, Config.AR_MENU.AR_BUTTON.height) then
+      Config.AR_MENU.enabled = true
+	  Config.EDIT_MENU.enabled = false
+    end
+  
+  elseif not Config.EDIT_MENU.enabled then
+    Config.EDIT_MENU.enabled = true
   end
 
 end

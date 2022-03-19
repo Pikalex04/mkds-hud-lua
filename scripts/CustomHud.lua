@@ -14,7 +14,7 @@ CustomHud.Items.input_display.draw = function(data)
 
   local fade = 0
 
-  if Config.Settings.MISC.disable_idisplay_after_finish then
+  if Config.Settings.CUSTOM_HUD.disable_idisplay_after_finish then
     if (Display.isHUDfinished(data)) then return end
     fade = data.fade
   end
@@ -25,7 +25,7 @@ CustomHud.Items.input_display.draw = function(data)
 
   local j = Input.getJoypad()
 
-  if data ~= nil and Config.Settings.MISC.live_ghost and Config.Settings.MISC.live_ghost_display_inputs and data.finished_run == 0 then
+  if data ~= nil and Config.Settings.AR_MENU.live_ghost and Config.Settings.HUD_SETTINGS.live_ghost_display_inputs and data.finished_run == 0 then
     j = Input.getGhostInput(data.ghost_input)
   end
 
@@ -62,7 +62,7 @@ CustomHud.Items.input_display.draw = function(data)
     colors['layout_fill']
   }
 
-  Bitmap.printImageIndexed(x,y,"resources/input_display.bmp", palette, finalPalette, fade, scale)
+  Bitmap.printImageIndexed(x,y,"resources/graphics/input_display.bmp", palette, finalPalette, fade, scale)
 
 end
 
@@ -98,7 +98,7 @@ CustomHud.Items.boost.draw = function(data)
       gui.box(x + 6*scale, y + 5*scale, x + (boost * 2 + 6)*scale, y + 15*scale, Utils.setColorFade(fill, data.fade), Utils.setColorFade(fill, data.fade))
     end
 
-    Bitmap.printImageIndexed(x,y,"resources/boost.bmp", palette, finalPalette, data.fade, scale)
+    Bitmap.printImageIndexed(x,y,"resources/graphics/boost.bmp", palette, finalPalette, data.fade, scale)
 
 end
 
@@ -126,7 +126,7 @@ CustomHud.Items.final_time.draw = function(data)
   local t_lap = 160 - data.time_lap
   if t_lap > 0 then x_offset = 135 * t_lap / 20 end
 
-  if Config.Settings.MISC.show_time_label_on_final_time then MarioFont.drawTimeLabel({x = x+x_offset*scale, y = y}, bordercolor, fillcolor_best, data.fade, scale) end
+  if Config.Settings.HUD_SETTINGS.show_time_label_on_final_time then MarioFont.drawTimeLabel({x = x+x_offset*scale, y = y}, bordercolor, fillcolor_best, data.fade, scale) end
   MarioFont.drawTimer({x = x+1+38*scale+x_offset*scale, y = y}, data.final_timer, bordercolor, fillcolor_best, data.fade, scale)
 
   for i=1,data.totallaps,1 do
@@ -135,9 +135,9 @@ CustomHud.Items.final_time.draw = function(data)
     if t_lap > 0 then x_offset = 135 * t_lap / 20 end
 
     if i == 1 then
-      if Config.Settings.MISC.show_time_label_on_final_time then MarioFont.drawLapLabel({x = x-9*scale+x_offset*scale, y = y+24*scale}, bordercolor, fillcolor, data.fade, scale) end
+      if Config.Settings.HUD_SETTINGS.show_time_label_on_final_time then MarioFont.drawLapLabel({x = x-9*scale+x_offset*scale, y = y+24*scale}, bordercolor, fillcolor, data.fade, scale) end
     end
-    if Config.Settings.MISC.show_time_label_on_final_time then MarioFont.drawChar(x+27*scale+ x_offset*scale, y+24*scale+16*(i-1)*scale, tostring(i), bordercolor, fillcolor, data.fade, scale) end
+    if Config.Settings.HUD_SETTINGS.show_time_label_on_final_time then MarioFont.drawChar(x+27*scale+ x_offset*scale, y+24*scale+16*(i-1)*scale, tostring(i), bordercolor, fillcolor, data.fade, scale) end
     MarioFont.drawTimer({x = x+1+38*scale+x_offset*scale, y = y+24*scale+16*(i-1)*scale}, data.lap_timer[i], bordercolor, fillcolor, data.fade, scale)
   end
 
@@ -150,10 +150,10 @@ CustomHud.Items.item_roulette.draw = function(data)
   local x, y = Config.Settings.CUSTOM_HUD.item_roulette.position.x, Config.Settings.CUSTOM_HUD.item_roulette.position.y
   local scale = Config.Settings.CUSTOM_HUD.item_roulette.scale
 
-  if data.shroom == 3 then Bitmap.printImage(x,y,"resources/item_shroom3.bmp", data.fade, scale)
-  elseif data.shroom == 2 then Bitmap.printImage(x,y,"resources/item_shroom2.bmp", data.fade, scale)
-  elseif data.shroom == 1 then Bitmap.printImage(x,y,"resources/item_shroom1.bmp", data.fade, scale)
-  elseif data.shroom == 0 then Bitmap.printImage(x,y,"resources/item_shroom0.bmp", data.fade, scale)
+  if data.shroom == 3 then Bitmap.printImage(x,y,"resources/graphics/item_shroom3.bmp", data.fade, scale)
+  elseif data.shroom == 2 then Bitmap.printImage(x,y,"resources/graphics/item_shroom2.bmp", data.fade, scale)
+  elseif data.shroom == 1 then Bitmap.printImage(x,y,"resources/graphics/item_shroom1.bmp", data.fade, scale)
+  elseif data.shroom == 0 then Bitmap.printImage(x,y,"resources/graphics/item_shroom0.bmp", data.fade, scale)
   end
 
 end
@@ -165,13 +165,13 @@ CustomHud.Items.lap_counter.draw = function(data)
   local x, y = Config.Settings.CUSTOM_HUD.lap_counter.position.x, Config.Settings.CUSTOM_HUD.lap_counter.position.y
   local scale = Config.Settings.CUSTOM_HUD.lap_counter.scale
 
-  if data.totallaps == 3 or data.totallaps == 5 then
+  if data.totallaps == 2 or data.totallaps == 3 or data.totallaps == 4 or data.totallaps == 5 then
     if data.lap > 1 and data.time_lap < 120 and data.time_lap % 12 > 7 and data.finished_run == 0 then
-      Bitmap.printImage(x,y,"resources/lap_empty.bmp", data.fade, scale)
+      Bitmap.printImage(x,y,"resources/graphics/lap_empty.bmp", data.fade, scale)
     else
-      Bitmap.printImage(x,y,"resources/lap_" .. data.lap .. ".bmp", data.fade, scale)
+      Bitmap.printImage(x,y,"resources/graphics/lap_" .. data.lap .. ".bmp", data.fade, scale)
     end
-    Bitmap.printImage(x+(59 * scale),y+(3 * scale),"resources/lap_total" .. data.totallaps .. ".bmp", data.fade, scale)
+    Bitmap.printImage(x+(59 * scale),y+(3 * scale),"resources/graphics/lap_total" .. data.totallaps .. ".bmp", data.fade, scale)
   end
 
 end
@@ -184,13 +184,13 @@ CustomHud.Items.speedometer.draw = function(data)
 
   local x, y = Config.Settings.CUSTOM_HUD.speedometer.position.x, Config.Settings.CUSTOM_HUD.speedometer.position.y
   local scale = Config.Settings.CUSTOM_HUD.speedometer.scale
-  if not Config.Settings.MISC.show_slash_on_kmh then
+  if not Config.Settings.HUD_SETTINGS.show_slash_on_kmh then
     x = x + 6 * scale
   end
 
   local speed = string.format("%.2f" ,math.abs(data.real_speed / 360))
 
-  if not Config.Settings.MISC.show_kmh_decimals then
+  if not Config.Settings.HUD_SETTINGS.show_kmh_decimals then
     speed = math.floor(speed)
   end
 
@@ -198,7 +198,7 @@ CustomHud.Items.speedometer.draw = function(data)
 
   MarioFont.drawString({x = x, y = y}, speed_str, 0x000000ff, 0xffffffff, data.fade, scale)
 
-  if Config.Settings.MISC.show_slash_on_kmh then
+  if Config.Settings.HUD_SETTINGS.show_slash_on_kmh then
     MarioFont.drawKmhSlashLabel({x = x + (MarioFont.NUMBER_SIZE * NUMBERLENGTH + 2) * scale, y = y}, 0x000000ff, 0xffffffff, data.fade, scale)
   else
     MarioFont.drawKmhLabel({x = x + (MarioFont.NUMBER_SIZE * NUMBERLENGTH + 2) * scale, y = y}, 0x000000ff, 0xffffffff, data.fade, scale)
@@ -225,14 +225,14 @@ CustomHud.Items.timer.draw = function(data)
     else fillcolor = 0xffc600ff
     end
 
-    if Config.Settings.MISC.show_time_label_on_timer then MarioFont.drawLapLabel(position, bordercolor, fillcolor, data.fade, scale) end
+    if Config.Settings.HUD_SETTINGS.show_time_label_on_timer then MarioFont.drawLapLabel(position, bordercolor, fillcolor, data.fade, scale) end
     if data.finished_run == 1 then
       MarioFont.drawTimer(timer_position, data.lap_timer[data.lap], bordercolor, fillcolor, data.fade, scale)
     else
       MarioFont.drawTimer(timer_position, data.lap_timer[data.lap-1], bordercolor, fillcolor, data.fade, scale)
     end
   else
-    if Config.Settings.MISC.show_time_label_on_timer then MarioFont.drawTimeLabel(position, bordercolor, fillcolor, data.fade, scale) end
+    if Config.Settings.HUD_SETTINGS.show_time_label_on_timer then MarioFont.drawTimeLabel(position, bordercolor, fillcolor, data.fade, scale) end
     MarioFont.drawTimer(timer_position, data.current_timer, bordercolor, fillcolor, data.fade, scale)
   end
 

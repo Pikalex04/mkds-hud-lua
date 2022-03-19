@@ -7,6 +7,11 @@ function Program.main(pointer, dataBuffer)
   Program.disableMusic()
   Program.wideScreen()
   Program.liveGhost()
+  Program.always100cc()
+  Program.unlockEverything()
+  Program.alwaysGlobalMap()
+  Program.forceFinishRace()
+  Program.replayCamera()
   Program.executeActions()
 
   data = {}
@@ -14,7 +19,6 @@ function Program.main(pointer, dataBuffer)
   if pointer[2] == 0 then
     data = nil
   else
-
     data.prb = memory.readbyteunsigned(pointer[2] + 0x4B)
     data.prb = bit.rshift(bit.band(data.prb, 32), 5)
     data.speed = memory.readbytesigned(pointer[2] + 0x45E)
@@ -24,7 +28,11 @@ function Program.main(pointer, dataBuffer)
     data.lap = Memory.readVariable(Memory.variable.lap)
     data.totallaps = Memory.readVariable(Memory.variable.totallaps)
     data.time_total = memory.readdword(pointer[1] + 0xD68)
-    data.time_lap = memory.readdword(pointer[1] + 0xD80)
+	if Memory.CTGP then
+	  data.time_lap = memory.readdword(pointer[1] + 0x9E8C)
+	else
+	  data.time_lap = memory.readdword(pointer[1] + 0xD80)
+	end
     data.finished_run = Memory.readVariable(Memory.variable.finished_run)
     data.ghost_input = Memory.readVariable(Memory.variable.ghost_input)
     data.fade = Memory.readVariable(Memory.variable.fade)
@@ -38,16 +46,15 @@ function Program.main(pointer, dataBuffer)
   	data.position.z = memory.readdwordsigned(pointer[2] + 0x84)
   	data.real_speed = memory.readdwordsigned(pointer[2] + 0x2A8) / 360
 
-    data.current_timer = Program.readTimer(pointer[1] + 0xD70)
-
-    data.lap_timer = {}
-
-    for i = 1, data.totallaps, 1 do
+	data.current_timer = Program.readTimer(pointer[1] + 0xD70)
+	data.lap_timer = {}
+	for i = 1, data.totallaps, 1 do
       data.lap_timer[i] = Program.readTimer(pointer[1] + 0xD88 + 4 * (i-1))
     end
+	data.final_timer = Program.readTimer(pointer[1] + 0xD9C)
 
-    data.final_timer = Program.readTimer(pointer[1] + 0xD9C)
-
+	Program.inputRecorder()
+	Program.noGhostFlickering()
   end
 
   if dataBuffer[1] == nil then
@@ -78,7 +85,7 @@ end
 function Program.wideScreen()
 
   base_ratio = 5461
-  local aspect_ratio = Config.Settings.MISC.widescreen and "16:9" or "4:3"
+  local aspect_ratio = Config.Settings.AR_MENU.widescreen and "16:9" or "4:3"
 
   if aspect_ratio == nil or aspect_ratio == "original" or aspect_ratio == "native" or aspect_ratio == "4:3" then
     Memory.writeVariable(Memory.variable.aspect_ratio, base_ratio)
@@ -116,24 +123,81 @@ function Program.disableHUD()
 end
 
 function Program.liveGhost()
-  Memory.writeVariable(Memory.variable.live_ghost, Config.Settings.MISC.live_ghost and 1 or 0)
+  Memory.writeVariable(Memory.variable.live_ghost, Config.Settings.AR_MENU.live_ghost and 1 or 0)
 end
 
 function Program.disableMusic()
   music_value = 0x7f
-  if Config.Settings.MISC.disable_music then music_value = 0 end
+  if Config.Settings.AR_MENU.disable_music then music_value = 0 end
   Memory.writeVariable(Memory.variable.music1, music_value)
   Memory.writeVariable(Memory.variable.music2, music_value)
 end
 
 function Program.readTimer(offset)
-    minutes = memory.readbyte(offset + 2)
-    seconds = memory.readbyte(offset + 3)
-    milisecs = memory.readword(offset)
+  if Memory.CTGP then
+    offset = offset + 0x910C
+  end
+  minutes = memory.readbyte(offset + 2)
+  seconds = memory.readbyte(offset + 3)
+  milisecs = memory.readword(offset)
 
-    minutes = (" " .. tostring(minutes)):sub(-2,-1)
-    seconds = ("00" .. tostring(seconds)):sub(-2,-1)
-    milisecs = ("000" .. tostring(milisecs)):sub(-3,-1)
+  minutes = (" " .. tostring(minutes)):sub(-2,-1)
+  seconds = ("00" .. tostring(seconds)):sub(-2,-1)
+  milisecs = ("000" .. tostring(milisecs)):sub(-3,-1)
 
-    return minutes .. ":" .. seconds .. ":" .. milisecs
+  return minutes .. ":" .. seconds .. ":" .. milisecs
+end
+
+function Program.always100cc()
+  Memory.writeVariable(Memory.variable.always_100_cc, Config.Settings.AR_MENU.always_100_cc and 1 or 2)
+end
+
+function Program.inputRecorder()
+  if Config.Settings.INPUT_RECORDER.record_inputs then
+    if data.finished_run < 1 then
+	  Recorder.dump()
+	  Config.INPUT_RECORDER_MENU.state = "Recording inputs..."
+	else
+	  Config.INPUT_RECORDER_MENU.state = "Recording finished."
+	end
+  else
+	  Config.INPUT_RECORDER_MENU.state = "Recorder disabled."
+  end
+end
+
+function Program.noGhostFlickering()
+  if Config.Settings.AR_MENU.no_ghost_flickering then
+    address = Memory.readVariable(Memory.variable.no_ghost_flicker) + 2348
+    memory.writebyte(address, 1)
+  end
+end
+
+function Program.unlockEverything()
+  if Config.Settings.AR_MENU.unlock_everything then
+    Memory.writeVariable(Memory.variable.unlock_everything, 0x7FFFFFF)
+  end
+end
+
+function Program.alwaysGlobalMap()
+  if Config.Settings.AR_MENU.always_global_map then
+    if Memory.readVariable(Memory.variable.always_global_map1) > 0 then
+	  if Memory.readVariable(Memory.variable.always_global_map2) < 2 then
+		address = Memory.readVariable(Memory.variable.always_global_map3)
+		memory.writebyte(address + 2088, 0)
+		memory.writebyte(address + 2092, 1)
+	  end
+	end
+  end
+end
+
+function Program.forceFinishRace()
+  if Config.Settings.AR_MENU.force_finish_race then
+    address = Memory.readVariable(Memory.variable.force_finish_race)
+    memory.writeword(address + 14, 8)
+    memory.writebyte(address + 20, 1)
+  end
+end
+
+function Program.replayCamera()
+  Memory.writeVariable(Memory.variable.replay_camera, Config.Settings.AR_MENU.replay_camera and 0 or 1)
 end

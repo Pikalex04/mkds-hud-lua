@@ -1,4 +1,5 @@
--- Script Made by MKDasher --
+-- Scripts made by Pikalex and MKDasher
+-- Version: 2.1
 
 dofile "scripts/json.lua"
 dofile "scripts/Utils.lua"
@@ -25,11 +26,14 @@ function fn()
 end
 
 function fm()
+  if Config.Settings.HUD_SETTINGS.green_screen_touchscreen then
+    gui.box(300, 0, 640, 640, "#00ff00", "#00ff00")
+  end
   Input.update()
-  if Config.EDIT_CUSTOM_HUD.enabled then gui.box(0,-Config.Settings.SCREEN_SIZE.height,Config.Settings.SCREEN_SIZE.width,0,"#00000044", "#00000044") end
+  if Config.EDIT_CUSTOM_HUD.enabled then gui.box(0,-Config.SCREEN_SIZE.height, Config.SCREEN_SIZE.width, 0, "#00000044", "#00000044") end
   local showHUD = pointer[2] ~= 0 and dataBuffer[1] ~= nil
   Display.displayHUD(dataBuffer, showHUD)
-  Display.displayEditMenu(Config.Settings.SCREEN_SIZE)
+  Display.displayEditMenu(Config.SCREEN_SIZE)
   Display.displayRamData(dataBuffer, pointer)
 end
 

@@ -1,7 +1,7 @@
 -- Default config variables
 
 Config = {
-  FILENAME = "config.json",
+  FILENAME = "resources/settings/config.json",
   EDIT_CUSTOM_HUD = {
     enabled = false,
     item = nil,
@@ -11,7 +11,24 @@ Config = {
     pressed = false
   },
   EDIT_MENU = {
-    enabled = true
+    enabled = true,
+	HUD_SETTINGS = {x = 240, y = 40, width = 180, item_height = 25},
+	CUSTOM_HUD = {x = 10, y = 40, width = 100, item_height = 25},
+	RAM_DATA = {x = 440, y = 24},
+	ACTIONS = {x = 125, y = 200, width = 100, item_height = 25},
+	HIDE_MENU_BUTTON = {x = 125, y = 290, width = 100, height = 25},
+	CUSTOM_HUD_EDIT_BUTTON = {x = 10, y = 290, width = 100, height = 25},
+	ORIGINAL_HUD = {x = 125, y = 40, width = 100, item_height = 25},
+	SAVE_CONFIG_BUTTON = {x = 240, y = 290, width = 100, height = 25},
+	HUD_EDIT_BUTTON = {x = 10, y = 325, width = 100, height = 25}
+  },
+  AR_MENU = {
+    enabled = false,
+	AR_LIST = {x = 10, y = 40, width = 180, item_height = 25},
+	AR_BUTTON = {x = 125, y = 325, width = 100, height = 25, item_height = 25}
+  },
+  SCREEN_SIZE = {
+    width = 640, height = 360
   }
 }
 
@@ -32,11 +49,20 @@ Config.Settings = {
     timer = {visible = true, position = {x = 388, y = -346}, scale = 2},
     final_time = {visible = true, position = {x = 380, y = -338}, scale = 2}
   },
-  MISC = {
-    disable_music = false,
-    live_ghost = false,
+  AR_MENU = {
+    always_100_cc = false,
+	no_ghost_flickering = false,
+	live_ghost = false,
+	disable_music = false,
+	unlock_everything = false,
+	always_global_map = false,
+	force_finish_race = false,
+	replay_camera = false,
+	widescreen = true
+  },
+  HUD_SETTINGS = {
     live_ghost_display_inputs = false,
-    widescreen = true,
+	green_screen_touchscreen = false,
     disable_idisplay_after_finish = true,
     show_kmh_decimals = false,
     show_slash_on_kmh = true,
@@ -58,21 +84,9 @@ Config.Settings = {
     prb_fill = 0xff0000ff,
     background = 0x00ff00ff,
     background_fill = 0x00000020
-  },
-  EDIT_PANEL = {
-    CUSTOM_HUD = {x = 10, y = 40, width = 100, item_height = 25},
-    ORIGINAL_HUD = {x = 125, y = 40, width = 100, item_height = 25},
-    MISC = {x = 240, y = 40, width = 180, item_height = 25},
-    CUSTOM_HUD_EDIT_BUTTON = {x = 10, y = 230, width = 100, height = 25},
-    SAVE_CONFIG_BUTTON = {x = 10, y = 290, width = 100, height = 25},
-    HIDE_MENU_BUTTON = {x = 10, y = 325, width = 100, height = 25},
-    ACTIONS = {x = 125, y = 215, width = 100, item_height = 25},
-    RAM_DATA = {x = 440, y = 24}
-  },
-  SCREEN_SIZE = {
-    width = 640, height = 360
   }
 }
+
 
 function Config.loadJSON(filename)
   local contents = ""

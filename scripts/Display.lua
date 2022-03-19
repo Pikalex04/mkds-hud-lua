@@ -17,7 +17,7 @@ end
 function Display.displayHUD(dataBuffer, showHUD)
   local custom_hud_size, custom_hud_keys = Utils.getTableSizeAndKeys(CustomHud.Items)
   for i = 1, custom_hud_size, 1 do
-    if custom_hud_keys[i] == "input_display" and not Config.Settings.MISC.disable_idisplay_after_finish and Config.Settings.CUSTOM_HUD[custom_hud_keys[i]].visible then
+    if custom_hud_keys[i] == "input_display" and not Config.Settings.HUD_SETTINGS.disable_idisplay_after_finish and Config.Settings.CUSTOM_HUD[custom_hud_keys[i]].visible then
       CustomHud.Items[custom_hud_keys[i]].draw(dataBuffer[1])
     elseif showHUD and Config.Settings.CUSTOM_HUD[custom_hud_keys[i]].visible then
       CustomHud.Items[custom_hud_keys[i]].draw(dataBuffer[1])
@@ -46,7 +46,7 @@ function Display.buttonList(title, size, keys, buttontypes, box)
 end
 
 function Display.displayRamDataItem(x,y,text)
-  gui.text(Config.Settings.EDIT_PANEL.RAM_DATA.x + x, Config.Settings.EDIT_PANEL.RAM_DATA.y + y, text, 0xffffffff, 0x000000ff)
+  gui.text(Config.EDIT_MENU.RAM_DATA.x + x, Config.EDIT_MENU.RAM_DATA.y + y, text, 0xffffffff, 0x000000ff)
 end
 
 function Display.displayRamData(dataBuffer, pointer)
@@ -83,14 +83,57 @@ function Display.displayRamData(dataBuffer, pointer)
 
 end
 
-function Display.displayEditMenu(screensize)
 
+function arMenu(screensize)
+  gui.box(2, 2, screensize.width - 2, screensize.height - 2, "#00000080", 0xffffffff)
+  gui.text(0, 10, Utils.getCenteredText("ACTION REPLAY CODES MENU", math.ceil(640 / 6)), 0xffd700ff, 0x000000ff)
+  gui.text(400, 345, "Right-click to interact with this menu!")
+  
+  
+  local ar_size, ar_keys = Utils.getTableSizeAndKeys(Config.Settings.AR_MENU)
+  local ar_buttontypes = {}
+  for i = 1, ar_size, 1 do
+    ar_buttontypes[i] = Config.Settings.AR_MENU[ar_keys[i]] and "pressed" or "unpressed"
+  end
+  Display.buttonList("ACTION REPLAY CODES", ar_size, ar_keys, ar_buttontypes, Config.AR_MENU.AR_LIST)
+  
+  Display.button(
+    Config.AR_MENU.AR_BUTTON.x,
+    Config.AR_MENU.AR_BUTTON.y,
+    Config.AR_MENU.AR_BUTTON.x + Config.AR_MENU.AR_BUTTON.width,
+    Config.AR_MENU.AR_BUTTON.y + Config.AR_MENU.AR_BUTTON.height,
+    "AR CODES MENU",
+    Config.AR_MENU.AR_BUTTON,
+    "pressed"
+  )
+  
+  Display.button(
+    Config.EDIT_MENU.HUD_EDIT_BUTTON.x,
+    Config.EDIT_MENU.HUD_EDIT_BUTTON.y,
+    Config.EDIT_MENU.HUD_EDIT_BUTTON.x + Config.EDIT_MENU.HUD_EDIT_BUTTON.width,
+    Config.EDIT_MENU.HUD_EDIT_BUTTON.y + Config.EDIT_MENU.HUD_EDIT_BUTTON.height,
+    "EDIT HUD",
+    Config.EDIT_MENU.HUD_EDIT_BUTTON,
+	"unpressed"
+  )
+  
+  gui.text(220, 199, "Note: the Replay Camera AR works only in EUR and CTGP Nitro ROMs.", 0xffffffff, 0x000000ff)
+end
+
+
+function Display.displayEditMenu(screensize)
+  
+  if Config.AR_MENU.enabled then
+    arMenu(screensize)
+  end
+  
   if not Config.EDIT_MENU.enabled then return end
 
   -- Main Panel
 
   gui.box(2, 2, screensize.width - 2, screensize.height - 2, "#00000080", 0xffffffff)
 
+  gui.text(0, 10, Utils.getCenteredText("HUD EDITING MENU", math.ceil(640 / 6)), 0xffd700ff, 0x000000ff)
   gui.text(400, 345, "Right-click to interact with this menu!")
 
   -- Custom HUD
@@ -100,16 +143,26 @@ function Display.displayEditMenu(screensize)
   for i = 1, custom_hud_size, 1 do
     custom_hud_buttontypes[i] = Config.Settings.CUSTOM_HUD[custom_hud_keys[i]].visible and "pressed" or "unpressed"
   end
-  Display.buttonList("CUSTOM HUD", custom_hud_size, custom_hud_keys, custom_hud_buttontypes, Config.Settings.EDIT_PANEL.CUSTOM_HUD)
+  Display.buttonList("CUSTOM HUD", custom_hud_size, custom_hud_keys, custom_hud_buttontypes, Config.EDIT_MENU.CUSTOM_HUD)
 
   Display.button(
-    Config.Settings.EDIT_PANEL.CUSTOM_HUD_EDIT_BUTTON.x,
-    Config.Settings.EDIT_PANEL.CUSTOM_HUD_EDIT_BUTTON.y,
-    Config.Settings.EDIT_PANEL.CUSTOM_HUD_EDIT_BUTTON.x + Config.Settings.EDIT_PANEL.CUSTOM_HUD_EDIT_BUTTON.width,
-    Config.Settings.EDIT_PANEL.CUSTOM_HUD_EDIT_BUTTON.y + Config.Settings.EDIT_PANEL.CUSTOM_HUD_EDIT_BUTTON.height,
+    Config.EDIT_MENU.CUSTOM_HUD_EDIT_BUTTON.x,
+    Config.EDIT_MENU.CUSTOM_HUD_EDIT_BUTTON.y,
+    Config.EDIT_MENU.CUSTOM_HUD_EDIT_BUTTON.x + Config.EDIT_MENU.CUSTOM_HUD_EDIT_BUTTON.width,
+    Config.EDIT_MENU.CUSTOM_HUD_EDIT_BUTTON.y + Config.EDIT_MENU.CUSTOM_HUD_EDIT_BUTTON.height,
     "EDIT MODE",
-    Config.Settings.EDIT_PANEL.CUSTOM_HUD_EDIT_BUTTON,
+    Config.EDIT_MENU.CUSTOM_HUD_EDIT_BUTTON,
     Config.EDIT_CUSTOM_HUD.enabled and "pressed" or "unpressed"
+  )
+  
+  Display.button(
+    Config.AR_MENU.AR_BUTTON.x,
+    Config.AR_MENU.AR_BUTTON.y,
+    Config.AR_MENU.AR_BUTTON.x + Config.AR_MENU.AR_BUTTON.width,
+    Config.AR_MENU.AR_BUTTON.y + Config.AR_MENU.AR_BUTTON.height,
+    "AR CODES MENU",
+    Config.AR_MENU.AR_BUTTON,
+    "unpressed"
   )
 
   if Config.EDIT_CUSTOM_HUD.enabled then
@@ -131,16 +184,16 @@ function Display.displayEditMenu(screensize)
   for i = 1, original_hud_size, 1 do
     original_hud_buttontypes[i] = Config.Settings.ORIGINAL_HUD[original_hud_keys[i]] and "pressed" or "unpressed"
   end
-  Display.buttonList("ORIGINAL HUD", original_hud_size, original_hud_keys, original_hud_buttontypes, Config.Settings.EDIT_PANEL.ORIGINAL_HUD)
+  Display.buttonList("ORIGINAL HUD", original_hud_size, original_hud_keys, original_hud_buttontypes, Config.EDIT_MENU.ORIGINAL_HUD)
 
   -- Misc HUD
 
-  local misc_size, misc_keys = Utils.getTableSizeAndKeys(Config.Settings.MISC)
+  local misc_size, misc_keys = Utils.getTableSizeAndKeys(Config.Settings.HUD_SETTINGS)
   local misc_buttontypes = {}
   for i = 1, misc_size, 1 do
-    misc_buttontypes[i] = Config.Settings.MISC[misc_keys[i]] and "pressed" or "unpressed"
+    misc_buttontypes[i] = Config.Settings.HUD_SETTINGS[misc_keys[i]] and "pressed" or "unpressed"
   end
-  Display.buttonList("MISC", misc_size, misc_keys, misc_buttontypes, Config.Settings.EDIT_PANEL.MISC)
+  Display.buttonList("HUD SETTINGS", misc_size, misc_keys, misc_buttontypes, Config.EDIT_MENU.HUD_SETTINGS)
 
   -- Actions Menu
 
@@ -150,29 +203,29 @@ function Display.displayEditMenu(screensize)
   for i = 1, actions_size, 1 do
     actions_buttontypes[i] = Actions.Items[actions_keys[i]].active and "pressed" or "unpressed"
   end
-  Display.buttonList("ACTIONS", actions_size, actions_keys, actions_buttontypes, Config.Settings.EDIT_PANEL.ACTIONS)
+  Display.buttonList("ACTIONS", actions_size, actions_keys, actions_buttontypes, Config.EDIT_MENU.ACTIONS)
 
   -- Save Config
 
   Display.button(
-    Config.Settings.EDIT_PANEL.SAVE_CONFIG_BUTTON.x,
-    Config.Settings.EDIT_PANEL.SAVE_CONFIG_BUTTON.y,
-    Config.Settings.EDIT_PANEL.SAVE_CONFIG_BUTTON.x + Config.Settings.EDIT_PANEL.SAVE_CONFIG_BUTTON.width,
-    Config.Settings.EDIT_PANEL.SAVE_CONFIG_BUTTON.y + Config.Settings.EDIT_PANEL.SAVE_CONFIG_BUTTON.height,
+    Config.EDIT_MENU.SAVE_CONFIG_BUTTON.x,
+    Config.EDIT_MENU.SAVE_CONFIG_BUTTON.y,
+    Config.EDIT_MENU.SAVE_CONFIG_BUTTON.x + Config.EDIT_MENU.SAVE_CONFIG_BUTTON.width,
+    Config.EDIT_MENU.SAVE_CONFIG_BUTTON.y + Config.EDIT_MENU.SAVE_CONFIG_BUTTON.height,
     "SAVE CONFIG",
-    Config.Settings.EDIT_PANEL.SAVE_CONFIG_BUTTON,
+    Config.EDIT_MENU.SAVE_CONFIG_BUTTON,
     Config.SAVE_CONFIG.pressed and "pressed" or "unpressed"
   )
 
   -- Hide Menu Button
 
   Display.button(
-    Config.Settings.EDIT_PANEL.HIDE_MENU_BUTTON.x,
-    Config.Settings.EDIT_PANEL.HIDE_MENU_BUTTON.y,
-    Config.Settings.EDIT_PANEL.HIDE_MENU_BUTTON.x + Config.Settings.EDIT_PANEL.HIDE_MENU_BUTTON.width,
-    Config.Settings.EDIT_PANEL.HIDE_MENU_BUTTON.y + Config.Settings.EDIT_PANEL.HIDE_MENU_BUTTON.height,
+    Config.EDIT_MENU.HIDE_MENU_BUTTON.x,
+    Config.EDIT_MENU.HIDE_MENU_BUTTON.y,
+    Config.EDIT_MENU.HIDE_MENU_BUTTON.x + Config.EDIT_MENU.HIDE_MENU_BUTTON.width,
+    Config.EDIT_MENU.HIDE_MENU_BUTTON.y + Config.EDIT_MENU.HIDE_MENU_BUTTON.height,
     "HIDE MENU",
-    Config.Settings.EDIT_PANEL.HIDE_MENU_BUTTON,
+    Config.EDIT_MENU.HIDE_MENU_BUTTON,
     "unpressed"
   )
 
@@ -181,6 +234,16 @@ function Display.displayEditMenu(screensize)
   for i = 1, actions_size, 1 do
     Actions.Items[actions_keys[i]].draw()
   end
+  
+  Display.button(
+    Config.EDIT_MENU.HUD_EDIT_BUTTON.x,
+    Config.EDIT_MENU.HUD_EDIT_BUTTON.y,
+    Config.EDIT_MENU.HUD_EDIT_BUTTON.x + Config.EDIT_MENU.HUD_EDIT_BUTTON.width,
+    Config.EDIT_MENU.HUD_EDIT_BUTTON.y + Config.EDIT_MENU.HUD_EDIT_BUTTON.height,
+    "EDIT HUD",
+    Config.EDIT_MENU.HUD_EDIT_BUTTON,
+	"pressed"
+  )
 
 
 end

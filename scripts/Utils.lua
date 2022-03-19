@@ -54,3 +54,13 @@ function Utils.setColorFade(color, fade)
   b = math.floor(b * real_fade / 256)
   return r * 0x1000000 + g * 0x10000 + b * 0x100 + a
 end
+
+function Utils.toHex(input)
+  local b, k, output, i, d = 16, '0123456789ABCDEF', '', 0
+  while input > 0 do
+      i = i + 1
+      input, d = math.floor(input / b), math.mod(input, b) + 1
+      output = string.sub(k, d, d) .. output
+  end
+  return output
+end
