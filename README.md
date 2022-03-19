@@ -1,5 +1,25 @@
 # Mario Kart DS Custom HUD Lua
 
+<details>
+  <summary>Table of Contents</summary>
+  <ol>
+    <li>
+      <a href="#about-and-features">About and Features</a>
+    </li>
+    <li>
+      <a href="#getting-started">Getting Started</a>
+      <ul>
+        <li><a href="#prerequisites">Prerequisites</a></li>
+        <li><a href="#setup">Setup</a></li>
+      </ul>
+    </li>
+    <li><a href="#usage">Usage</a></li>
+    <li><a href="#todo">TODO</a></li>
+    <li><a href="#contact-and-links">Contact and Links</a></li>
+    <li><a href="#credits">Credits</a></li>
+  </ol>
+</details>
+
 ## About and Features
 
 This is a package of Lua scripts which can be used to draw a custom Mario Kart DS HUD using @mkdasher's [DeSmuME WiDeScreen Edition](https://github.com/mkdasher/desmume-widescreen).
