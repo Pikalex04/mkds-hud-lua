@@ -27,7 +27,7 @@ end
 
 function fm()
   if Config.Settings.HUD_SETTINGS.green_screen_touchscreen then
-    gui.box(300, 0, 640, 640, "#00ff00", "#00ff00")
+    gui.box(0, 0, 640, 640, "#00ff00", "#00ff00")
   end
   Input.update()
   if Config.EDIT_CUSTOM_HUD.enabled then gui.box(0,-Config.SCREEN_SIZE.height, Config.SCREEN_SIZE.width, 0, "#00000044", "#00000044") end
