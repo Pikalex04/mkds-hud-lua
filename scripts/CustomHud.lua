@@ -14,7 +14,7 @@ CustomHud.Items.input_display.draw = function(data)
 
   local fade = 0
 
-  if Config.Settings.CUSTOM_HUD.disable_idisplay_after_finish then
+  if Config.Settings.HUD_SETTINGS.disable_idisplay_after_finish then
     if (Display.isHUDfinished(data)) then return end
     fade = data.fade
   end
