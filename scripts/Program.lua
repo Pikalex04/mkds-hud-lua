@@ -53,7 +53,6 @@ function Program.main(pointer, dataBuffer)
     end
 	data.final_timer = Program.readTimer(pointer[1] + 0xD9C)
 
-	Program.inputRecorder()
 	Program.noGhostFlickering()
   end
 
@@ -150,19 +149,6 @@ end
 
 function Program.always100cc()
   Memory.writeVariable(Memory.variable.always_100_cc, Config.Settings.AR_MENU.always_100_cc and 1 or 2)
-end
-
-function Program.inputRecorder()
-  if Config.Settings.INPUT_RECORDER.record_inputs then
-    if data.finished_run < 1 then
-	  Recorder.dump()
-	  Config.INPUT_RECORDER_MENU.state = "Recording inputs..."
-	else
-	  Config.INPUT_RECORDER_MENU.state = "Recording finished."
-	end
-  else
-	  Config.INPUT_RECORDER_MENU.state = "Recorder disabled."
-  end
 end
 
 function Program.noGhostFlickering()
