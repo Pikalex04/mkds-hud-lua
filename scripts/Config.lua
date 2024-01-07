@@ -58,7 +58,9 @@ Config.Settings = {
 	always_global_map = false,
 	force_finish_race = false,
 	replay_camera = false,
-	widescreen = true
+	widescreen = true,
+  remove_replay_ghost = false,
+  replay_as_ghost = false
   },
   HUD_SETTINGS = {
     live_ghost_display_inputs = false,

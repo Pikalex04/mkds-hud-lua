@@ -12,6 +12,7 @@ Memory.variable = {
   finished_run = {address = {0x217ACAC, 0x217AC8C, 0x217AD2C, 0x217ACAC}, size = 1},
 
   fade = {address = {0x21755B0, 0x2175590, 0x2175630, 0x21755B0}, size = 2},
+  gamemode = {address = {0x23CDCE0, 0x23CDCE0, 0x23CDCE0, 0x23CF700}, size = 4},
 
   aspect_ratio = {address = {0x20775D0, 0x20775D0, 0x2077710, 0x20775D0}, size = 4},
   hud_aspect_ratio = {address = {0x208A068, 0x208A068, 0x208A1A8, 0x208A068}, size = 2},
@@ -21,6 +22,8 @@ Memory.variable = {
   no_ghost_flicker = {address = {0x217AD18, 0x217ACF8, 0x217AD98, 0x217AD18}, size = 4},
   unlock_everything = {address = {0x23CE2E0, 0x23CE2E0, 0x23CE2E0, 0x23CE2E0}, size = 4},
   replay_camera = {address = {0x2040CEC, 0x2040CEC, 0x2040C88, 0x2040CEC}, size = 1},
+  replay_as_ghost = {address = {0x23CDD48, 0x23CDD48, 0x23CD388, 0x23CF768}, size = 4},
+  remove_replay_ghost = {address = {0x217AD18, 0x217ACF8, 0x217AD98, 0x217AD18}, size = 4},
   
   always_global_map1 = {address = {0x217AD18, 0x217ACF8, 0x217AD98, 0x217AD18}, size = 4},
   always_global_map2 = {address = {0x217B9F0, 0x217B9D0, 0x217BA70, 0x217B9F0}, size = 4},

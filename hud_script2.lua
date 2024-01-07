@@ -1,5 +1,5 @@
 -- Scripts made by Pikalex and MKDasher
--- Version: 2.1
+-- Version: 2.2
 
 dofile "scripts/json.lua"
 dofile "scripts/Utils.lua"
@@ -22,7 +22,9 @@ Bitmap.loadAllBitmaps()
 function fn()
   Memory.setVersion()
   pointer = Memory.getPointers()
-  dataBuffer = Program.main(pointer, dataBuffer)
+  if emu.framecount() > 60 then -- prevent crash
+    dataBuffer = Program.main(pointer, dataBuffer)
+  end
 end
 
 function fm()

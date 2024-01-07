@@ -3,16 +3,19 @@ Program = {
 }
 
 function Program.main(pointer, dataBuffer)
-  Program.disableHUD()
-  Program.disableMusic()
-  Program.wideScreen()
-  Program.liveGhost()
-  Program.always100cc()
-  Program.unlockEverything()
-  Program.alwaysGlobalMap()
-  Program.forceFinishRace()
-  Program.replayCamera()
-  Program.executeActions()
+  if Program.isTimeTrials() then
+    Program.disableHUD()
+    Program.disableMusic()
+    Program.wideScreen()
+    Program.liveGhost()
+    Program.always100cc()
+    Program.unlockEverything()
+    Program.alwaysGlobalMap()
+    Program.forceFinishRace()
+    Program.replayCamera()
+    Program.replayAsGhost()
+    Program.executeActions()
+  end
 
   data = {}
 
@@ -46,14 +49,17 @@ function Program.main(pointer, dataBuffer)
   	data.position.z = memory.readdwordsigned(pointer[2] + 0x84)
   	data.real_speed = memory.readdwordsigned(pointer[2] + 0x2A8) / 360
 
-	data.current_timer = Program.readTimer(pointer[1] + 0xD70)
-	data.lap_timer = {}
-	for i = 1, data.totallaps, 1 do
-      data.lap_timer[i] = Program.readTimer(pointer[1] + 0xD88 + 4 * (i-1))
-    end
-	data.final_timer = Program.readTimer(pointer[1] + 0xD9C)
+    data.current_timer = Program.readTimer(pointer[1] + 0xD70)
+    data.lap_timer = {}
+    for i = 1, data.totallaps, 1 do
+        data.lap_timer[i] = Program.readTimer(pointer[1] + 0xD88 + 4 * (i-1))
+      end
+    data.final_timer = Program.readTimer(pointer[1] + 0xD9C)
 
-	Program.noGhostFlickering()
+    if Program.isTimeTrials() then
+      Program.noGhostFlickering()
+      Program.removeReplayGhost()
+    end
   end
 
   if dataBuffer[1] == nil then
@@ -153,7 +159,7 @@ end
 
 function Program.noGhostFlickering()
   if Config.Settings.AR_MENU.no_ghost_flickering then
-    address = Memory.readVariable(Memory.variable.no_ghost_flicker) + 2348
+    address = Memory.readVariable(Memory.variable.no_ghost_flicker) + 0x5A8 + 0x384
     memory.writebyte(address, 1)
   end
 end
@@ -186,4 +192,21 @@ end
 
 function Program.replayCamera()
   Memory.writeVariable(Memory.variable.replay_camera, Config.Settings.AR_MENU.replay_camera and 0 or 1)
+end
+
+function Program.removeReplayGhost()
+  if Config.Settings.AR_MENU.remove_replay_ghost then
+    address = Memory.readVariable(Memory.variable.remove_replay_ghost) + 0x5A8 + 0x80
+    memory.writedword(address, 0x80000000)
+    memory.writedword(address + 4, 0x10000000)
+    memory.writedword(address + 8, 0x80000000)
+  end
+end
+
+function Program.replayAsGhost()
+  Memory.writeVariable(Memory.variable.replay_as_ghost, Config.Settings.AR_MENU.replay_as_ghost and 2 or 0)
+end
+
+function Program.isTimeTrials()
+  return Memory.readVariable(Memory.variable.gamemode) == 1
 end
